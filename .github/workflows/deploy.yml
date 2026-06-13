@@ -16,18 +16,11 @@ jobs:
     steps:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
+
+      - name: Install, build, and upload your site
+        uses: withastro/action@v3
         with:
-          node-version: 22 # Diperbarui untuk mengatasi warning Node 20
-      - name: Install dependencies
-        run: npm install
-      - name: Build Astro
-        run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
+          node-version: 22.12.0 # <--- INI ADALAH SOLUSINYA
 
   deploy:
     needs: build
