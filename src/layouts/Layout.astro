@@ -1,0 +1,84 @@
+---
+// src/layouts/Layout.astro
+import '../styles/global.css'; // Pastikan file global CSS Anda dipanggil di sini
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    
+    <!-- Meta Description untuk SEO (Lighthouse 100) -->
+    <meta name="description" content="Portofolio Abdy, Mobile Developer (Kotlin) dan Web Developer (Laravel). Lihat pengalaman dan proyek unggulan saya.">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animasi Global -->
+    <style is:global>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white">
+    
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/50">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="#" class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-teal-400 bg-clip-text text-transparent font-mono tracking-wider">
+                &lt;abdyuniors /&gt;
+            </a>
+            <nav class="flex gap-6 text-sm font-medium text-slate-400 hidden md:flex">
+                <a href="#tech" class="hover:text-indigo-400 transition-colors">Tech Stack</a>
+                <a href="#projects" class="hover:text-indigo-400 transition-colors">Proyek</a>
+                <a href="#contact" class="hover:text-indigo-400 transition-colors">Kontak</a>
+            </nav>
+            <!-- Mobile menu button icon -->
+            <button class="md:hidden text-slate-400 hover:text-white" aria-label="Menu">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Konten Halaman -->
+    <slot />
+
+    <!-- Footer Revisi + Social Media -->
+    <footer class="py-8 border-t border-slate-900 bg-slate-950">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
+            <div class="text-slate-400">
+                <p class="text-sm font-mono font-semibold">&copy; 2026 abdyuniors.</p>
+                <p class="text-xs mt-1">All rights reserved.</p>
+            </div>
+            
+            <!-- Ikon Social Media -->
+            <div class="flex gap-5 text-xl">
+                <a href="https://github.com/abdyuniors" target="_blank" aria-label="GitHub" class="text-slate-500 hover:text-white transition-colors transform hover:scale-110">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/" target="_blank" aria-label="LinkedIn" class="text-slate-500 hover:text-blue-500 transition-colors transform hover:scale-110">
+                    <i class="fa-brands fa-linkedin"></i>
+                </a>
+                <a href="https://instagram.com/" target="_blank" aria-label="Instagram" class="text-slate-500 hover:text-pink-500 transition-colors transform hover:scale-110">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://facebook.com/" target="_blank" aria-label="Facebook" class="text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-500 transition-colors transform hover:scale-110">
+                  <i class="fa-brands fa-facebook"></i>
+                </a>
+            </div>
+
+            <div class="text-xs text-slate-500 text-center md:text-right">
+                Dirancang & dibangun dengan <i class="fa-solid fa-code text-indigo-500 mx-1"></i> menggunakan <br class="md:hidden">
+                <span class="text-indigo-400 font-medium">Astro</span> & <span class="text-teal-400 font-medium">Tailwind</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
