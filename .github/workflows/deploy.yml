@@ -14,13 +14,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your repository using git
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install, build, and upload your site
-        uses: withastro/action@v3
+      # 1. Kita paksa GitHub memakai Node.js versi 22
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
         with:
-          node-version: 22.12.0 # <--- INI ADALAH SOLUSINYA
+          node-version: 22
+
+      # 2. Instal semua paket npm secara manual
+      - name: Install dependencies
+        run: npm install
+
+      # 3. Build Astro secara manual
+      - name: Build Astro
+        run: npm run build
+
+      # 4. Unggah hasilnya ke GitHub Pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
 
   deploy:
     needs: build
