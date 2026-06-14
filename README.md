@@ -42,4 +42,4 @@ Jika Anda ingin mengkloning dan melihat struktur kode Astro dari portofolio ini 
 
 1. **Clone repository ini:**
 ```bash
-   git clone [https://github.com/abdyuniors/abdyuniors.git](https://github.com/abdyuniors/abdyuniors.git)
+   git clone https://github.com/abdyuniors/abdyuniors.git
