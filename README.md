@@ -65,7 +65,7 @@ Ingin menjalankan proyek ini di komputer Anda? Sangat mudah:
 # 1. Clone repositori
 
 ```bash
-git clone [https://github.com/abdyuniors/abdyuniors.github.io.git](https://github.com/abdyuniors/abdyuniors.github.io.git)
+git clone https://github.com/abdyuniors/abdyuniors.github.io.git
 ```
 
 # 2. Masuk ke direktori proyek
