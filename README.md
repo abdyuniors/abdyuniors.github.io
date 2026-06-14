@@ -62,18 +62,29 @@ Aplikasi ini telah melalui proses optimasi ketat untuk memastikan tidak ada *lag
 
 Ingin menjalankan proyek ini di komputer Anda? Sangat mudah:
 
-```bash
 # 1. Clone repositori
+
+```bash
 git clone [https://github.com/abdyuniors/abdyuniors.github.io.git](https://github.com/abdyuniors/abdyuniors.github.io.git)
+```
 
 # 2. Masuk ke direktori proyek
+
+```bash
 cd abdyuniors.github.io
+```
 
 # 3. Instal dependencies
+
+```bash
 npm install
+```
 
 # 4. Jalankan server lokal
+
+```bash
 npm run dev
+```
 
 Buka `http://localhost:4321` di browser Anda untuk melihat hasilnya.
 
