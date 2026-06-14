@@ -1,1 +1,129 @@
 @import "tailwindcss";
+
+/* Pastikan scrolling mulus */
+html {
+  scroll-behavior: smooth;
+  /* Sesuaikan scroll-padding-top dengan tinggi navbar agar anchor link tidak tertutup navbar */
+  scroll-padding-top: 5rem; /* pt-20 (80px) */
+}
+
+/* Custom Scrollbar untuk browser berbasis Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a; /* slate-900 */
+}
+::-webkit-scrollbar-thumb {
+  background: #334155; /* slate-700 */
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4f46e5; /* indigo-600 */
+}
+
+/* Animasi pulse glow halus untuk tombol roket */
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.1) translateY(1px);
+  }
+}
+
+.group:hover .group-hover\:animate-pulse {
+  animation: pulse-slow 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Hilangkan outline AOS secara global agar tidak mengganggu focus styles */
+[data-aos] {
+  pointer-events: none;
+}
+.aos-animate {
+  pointer-events: auto;
+}
+
+/* Utility class untuk animasi hover ikon */
+.hover-lift {
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+}
+.grid-bg {
+  /* Background dasar Slate-950 */
+  background-color: #020617;
+  /* Pola Grid dengan transparansi 3% agar sangat halus */
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.blob {
+  position: fixed; /* Fixed agar selalu menghiasi background saat discroll */
+  border-radius: 999px;
+  filter: blur(120px);
+  opacity: 0.15; /* Transparansi rendah agar tidak mengganggu teks */
+  z-index: -10; /* Pastikan selalu di lapisan paling belakang */
+  pointer-events: none; /* Agar tidak menghalangi klik pada web */
+}
+
+/* Warna disesuaikan dengan tema portofolio Anda */
+.blob-indigo {
+  background: #6366f1; /* Indigo */
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  left: -100px;
+}
+
+.blob-teal {
+  background: #14b8a6; /* Teal */
+  width: 500px;
+  height: 500px;
+  bottom: -150px;
+  right: -150px;
+}
+
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cahaya senter (radial-gradient) */
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Warna cahaya Indigo transparan */
+  background: radial-gradient(
+    600px circle at var(--mouse-x) var(--mouse-y),
+    rgba(99, 102, 241, 0.15),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* Agar klik tetap tembus ke elemen di bawahnya */
+  z-index: 0;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+/* Pastikan konten di dalam kartu berada di atas cahaya */
+.spotlight-card > * {
+  position: relative;
+  z-index: 1;
+}

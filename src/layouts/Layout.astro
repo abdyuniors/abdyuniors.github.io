@@ -1,7 +1,20 @@
 ---
 // src/layouts/Layout.astro
-import '../styles/global.css'; // Pastikan file global CSS Anda dipanggil di sini
-const { title } = Astro.props;
+import '../styles/global.css'; // Pastikan Tailwind dan base styles ada di sini
+
+interface Props {
+    title: string;
+    description?: string; // Membuat deskripsi opsional per halaman
+}
+
+const { 
+    title, 
+    // Default deskripsi jika tidak dipassing dari halaman
+    description = "Portofolio Abdy, Mobile Developer dan Web Developer berbasis di Kupang, NTT. Lihat pengalaman dan proyek unggulan saya." 
+} = Astro.props;
+
+// Tentukan URL absolut untuk gambar OG (ganti dengan URL domain Anda nanti)
+const ogImage = "/og-image.jpg"; // Letakkan gambar og-image.jpg di folder public/
 ---
 
 <!DOCTYPE html>
@@ -9,76 +22,228 @@ const { title } = Astro.props;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content={Astro.generator} />
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <title>{title}</title>
-    
-    <!-- Meta Description untuk SEO (Lighthouse 100) -->
-    <meta name="description" content="Portofolio Abdy, Mobile Developer (Kotlin) dan Web Developer (Laravel). Lihat pengalaman dan proyek unggulan saya.">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Animasi Global -->
-    <style is:global>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-    </style>
+    <!-- Meta Description Standar -->
+    <meta name="description" content={description}>
+    <meta name="keywords" content="Abdy, Portofolio, Mobile Developer, Web Developer, Kotlin, Laravel, Kupang, NTT, Indonesia">
+    <meta name="author" content="abdyuniors">
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content={Astro.url}>
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:image" content={new URL(ogImage, Astro.url)}>
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content={Astro.url}>
+    <meta property="twitter:title" content={title}>
+    <meta property="twitter:description" content={description}>
+    <meta property="twitter:image" content={new URL(ogImage, Astro.url)}>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white">
+<body class="grid-bg text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white overflow-x-hidden pt-16">
+    <!-- EFEK PARTIKEL DEBU KOSMIK -->
+    <canvas id="particles-canvas" class="fixed inset-0 pointer-events-none z-[-5] opacity-30"></canvas>
     
+    <div class="blob blob-indigo"></div>
+    <div class="blob blob-teal"></div>
+
+    <!-- SCROLL PROGRESS BAR -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-indigo-500 via-teal-400 to-amber-400 z-[60] w-0 transition-all duration-150"></div>
     <!-- Navbar -->
-    <header class="fixed top-0 left-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/50">
+    <header class="fixed top-0 left-0 w-full z-50 bg-slate-950/50 backdrop-blur-md border-b border-slate-800/50 transition-all duration-300" id="main-header" data-aos="fade-down" data-aos-duration="800">
         <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="#" class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-teal-400 bg-clip-text text-transparent font-mono tracking-wider">
-                &lt;abdyuniors /&gt;
+            <!-- Logo -->
+            <a href="#" class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-teal-400 bg-clip-text text-transparent font-mono tracking-wider hover:opacity-80 transition-opacity">
+                &lt;abdyuniors<span class="text-amber-400">.dev</span> /&gt;
             </a>
-            <nav class="flex gap-6 text-sm font-medium text-slate-400 hidden md:flex">
-                <a href="#tech" class="hover:text-indigo-400 transition-colors">Tech Stack</a>
-                <a href="#projects" class="hover:text-indigo-400 transition-colors">Proyek</a>
-                <a href="#contact" class="hover:text-indigo-400 transition-colors">Kontak</a>
+
+            <!-- Desktop Navigation -->
+            <nav class="flex gap-6 text-sm font-medium text-slate-300 hidden md:flex">
+                <a href="#tech" class="hover:text-indigo-400 transition-colors duration-300 relative group py-1">
+                    Tech Stack
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#projects" class="hover:text-indigo-400 transition-colors duration-300 relative group py-1">
+                    Proyek
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#contact" class="hover:text-indigo-400 transition-colors duration-300 relative group py-1">
+                    Kontak
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full"></span>
+                </a>
             </nav>
+
             <!-- Mobile menu button icon -->
-            <button class="md:hidden text-slate-400 hover:text-white" aria-label="Menu">
-                <i class="fa-solid fa-bars text-xl"></i>
+            <button class="md:hidden text-slate-400 hover:text-white p-2 flex items-center justify-center rounded-lg hover:bg-slate-800/50 transition-colors" aria-label="Menu" id="mobile-menu-button">
+                <i class="fa-solid fa-bars text-xl transition-transform duration-300" id="menu-icon"></i>
             </button>
+        </div>
+
+        <!-- Mobile Navigation Dropdown -->
+        <div class="hidden md:hidden absolute top-16 left-0 w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800 shadow-xl" id="mobile-menu">
+            <nav class="flex flex-col p-4 gap-4 text-slate-300">
+                <a href="#tech" class="mobile-nav-link p-2 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">Tech Stack</a>
+                <a href="#projects" class="mobile-nav-link p-2 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">Proyek</a>
+                <a href="#contact" class="mobile-nav-link p-2 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">Kontak</a>
+            </nav>
         </div>
     </header>
 
     <!-- Konten Halaman -->
-    <slot />
+    <main>
+        <slot />
+    </main>
 
-    <!-- Footer Revisi + Social Media -->
-    <footer class="py-8 border-t border-slate-900 bg-slate-950">
-        <div class="max-w-5xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
-            <div class="text-slate-400">
-                <p class="text-sm font-mono font-semibold">&copy; 2026 abdyuniors.</p>
-                <p class="text-xs mt-1">All rights reserved.</p>
-            </div>
+    <!-- Footer -->
+    <footer class="py-12 border-t border-slate-800/50 bg-slate-950/50 mt-12 relative overflow-hidden" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
+        <!-- Dekorasi latar belakang footer (glow effect) -->
+        <div class="absolute -top-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl opacity-50"></div>
+        <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl opacity-50"></div>
+
+        <div class="max-w-6xl mx-auto px-4 flex flex-col items-center gap-8 relative z-10">
             
-            <!-- Ikon Social Media -->
-            <div class="flex gap-5 text-xl">
-                <a href="https://github.com/abdyuniors" target="_blank" aria-label="GitHub" class="text-slate-500 hover:text-white transition-colors transform hover:scale-110">
-                    <i class="fa-brands fa-github"></i>
-                </a>
-                <a href="https://linkedin.com/" target="_blank" aria-label="LinkedIn" class="text-slate-500 hover:text-blue-500 transition-colors transform hover:scale-110">
-                    <i class="fa-brands fa-linkedin"></i>
-                </a>
-                <a href="https://instagram.com/" target="_blank" aria-label="Instagram" class="text-slate-500 hover:text-pink-500 transition-colors transform hover:scale-110">
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-                <a href="https://facebook.com/" target="_blank" aria-label="Facebook" class="text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-500 transition-colors transform hover:scale-110">
-                  <i class="fa-brands fa-facebook"></i>
-                </a>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 w-full text-center md:text-left">
+                <div class="text-slate-400">
+                    <p class="text-sm font-mono font-semibold bg-gradient-to-r from-indigo-400 to-teal-400 bg-clip-text text-transparent">&copy; 2026 abdyuniors.</p>
+                    <p class="text-xs mt-1">All rights reserved. Berbasis di Kupang, NTT.</p>
+                </div>
+                
+                <!-- Ikon Social Media dengan efek animasi hover baru -->
+                <div class="flex gap-6 text-2xl">
+                    <a href="https://github.com/abdyuniors" target="_blank" aria-label="GitHub" class="text-slate-500 hover:text-white hover-lift">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/abdyuniors" target="_blank" aria-label="LinkedIn" class="text-slate-500 hover:text-blue-500 hover-lift">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                    <a href="https://instagram.com/abdyuniors" target="_blank" aria-label="Instagram" class="text-slate-500 hover:text-pink-500 hover-lift">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://facebook.com/abdysuek" target="_blank" aria-label="Facebook" class="text-slate-500 hover:text-blue-600 hover-lift">
+                      <i class="fa-brands fa-facebook"></i>
+                    </a>
+                </div>
             </div>
 
-            <div class="text-xs text-slate-500 text-center md:text-right">
-                Dirancang & dibangun dengan <i class="fa-solid fa-code text-indigo-500 mx-1"></i> menggunakan <br class="md:hidden">
-                <span class="text-indigo-400 font-medium">Astro</span> & <span class="text-teal-400 font-medium">Tailwind</span>
+            <div class="text-xs text-slate-500 text-center border-t border-slate-800/50 pt-8 w-full group">
+                Dirancang & dibangun dengan <i class="fa-solid fa-heart text-red-500 mx-1 group-hover:scale-125 transition-transform inline-block">
+                </i> dan <i class="fa-solid fa-code text-indigo-500 mx-1"></i> menggunakan 
+                <span class="text-indigo-400 font-medium hover:text-indigo-300 transition-colors">Astro</span> & 
+                <span class="text-teal-400 font-medium hover:text-teal-300 transition-colors">Tailwind CSS</span>.
             </div>
         </div>
     </footer>
+
+    <button
+        id="scrollToTopBtn"
+        class="fixed bottom-6 right-6 z-50 p-2.5 bg-slate-900/90 text-indigo-400 rounded-full shadow-2xl shadow-indigo-500/20 backdrop-blur-sm 
+                border border-slate-800 hover:border-indigo-500/50
+                opacity-0 invisible translate-y-10 transition-all duration-500 ease-in-out
+                hover:bg-slate-800 active:scale-95 group"
+        aria-label="Luncurkan ke atas"
+        >
+        <span class="absolute inset-x-0 bottom-2 h-3 w-3 mx-auto rounded-full bg-orange-600 blur-md opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity duration-300"></span>
+        
+        <i class="fa-solid fa-rocket text-1xl transition-all duration-300 -rotate-45 transform 
+                    group-hover:text-white group-hover:-translate-y-1 group-hover:translate-x-1"></i>
+    </button>
+
+    <script>
+    // Menggunakan IIFE agar tidak mengotori global scope
+    (function() {
+        const btn = document.getElementById('scrollToTopBtn');
+        
+        if (!btn) return;
+
+        // Logika menampilkan/menyembunyikan tombol
+        window.addEventListener('scroll', function() {
+        // Tombol muncul setelah user scroll 400px ke bawah
+        if (window.scrollY > 400) {
+            btn.classList.add('opacity-100', 'visible', 'translate-y-0');
+            btn.classList.remove('opacity-0', 'invisible', 'translate-y-10');
+        } else {
+            btn.classList.remove('opacity-100', 'visible', 'translate-y-0');
+            btn.classList.add('opacity-0', 'invisible', 'translate-y-10');
+        }
+        });
+
+        // Logika Scroll ke Atas saat diklik
+        btn.addEventListener('click', function() {
+        // Memanfaatkan scroll-behavior: smooth yang sudah ada di HTML
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        });
+    })();
+    </script>
+
+    <!-- AOS JS & Initialization -->
+    <script is:inline src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script is:inline>
+        // 1. Initialize AOS
+        AOS.init({
+            duration: 800, // Sedikit diperlambat agar lebih smooth
+            once: true,    // Animasi hanya jalan sekali saat scroll down
+            offset: 120,   // Jarak trigger animasi dari bawah screen (px)
+            easing: 'ease-out-cubic', // Jenis easing agar tidak kaku
+        });
+
+        // 2. Logika Mobile Menu
+        const menuBtn = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const navLinks = document.querySelectorAll('.mobile-nav-link');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('hidden');
+            // Animasi rotasi ikon burger ke X (sederhana)
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.classList.remove('fa-xmark', 'rotate-90');
+                menuIcon.classList.add('fa-bars');
+            } else {
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-xmark', 'rotate-90');
+            }
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+
+        // Tutup menu saat link diklik (untuk single page apps)
+        navLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+
+        // Tutup menu saat resize ke desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) { // md breakpoint Tailwind
+                if (!mobileMenu.classList.contains('hidden')) {
+                    toggleMenu();
+                }
+            }
+        });
+
+        // 3. Efek Navbar Shadow saat Scroll
+        const header = document.getElementById('main-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                // Saat discroll, ubah ke /80 agar masih sedikit tembus pandang
+                header.classList.add('shadow-lg', 'border-slate-800', 'bg-slate-950/80');
+                header.classList.remove('border-slate-800/50', 'bg-slate-950/50');
+            } else {
+                // Saat di paling atas, kembali ke /50 agar sangat transparan
+                header.classList.remove('shadow-lg', 'border-slate-800', 'bg-slate-950/80');
+                header.classList.add('border-slate-800/50', 'bg-slate-950/50');
+            }
+        });
+    </script>
 </body>
 </html>
