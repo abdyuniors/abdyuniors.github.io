@@ -74,6 +74,8 @@ html {
   opacity: 0.15; /* Transparansi rendah agar tidak mengganggu teks */
   z-index: -10; /* Pastikan selalu di lapisan paling belakang */
   pointer-events: none; /* Agar tidak menghalangi klik pada web */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* Warna disesuaikan dengan tema portofolio Anda */

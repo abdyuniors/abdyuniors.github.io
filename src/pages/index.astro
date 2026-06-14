@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import { Image } from 'astro:assets';
+import fotoProfil from '../assets/foto-abdy.png';
 ---
 
 <Layout title="Abdyunior Januar Suek - Portfolio">
@@ -47,7 +49,13 @@ import ProjectCard from '../components/ProjectCard.astro';
                         <div class="relative max-w-xs md:max-w-sm mx-auto md:ml-auto md:mr-0 group" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
                             <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-teal-500 rounded-[2rem] blur-2xl opacity-15 group-hover:opacity-30 transition-opacity duration-500"></div>
                             <div class="relative bg-slate-900/50 border border-slate-800/80 rounded-[2rem] overflow-hidden aspect-[4/5] shadow-2xl">
-                                <img src="/foto-abdy.png" alt="Foto Profil Abdy" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" loading="eager"/>
+                                <Image 
+                                src={fotoProfil} 
+                                alt="Foto Profil Abdy" 
+                                class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                                loading="eager"
+                                fetchpriority="high"
+                            />
                             </div>
                         </div>
                     </div>
@@ -213,36 +221,36 @@ import ProjectCard from '../components/ProjectCard.astro';
 </Layout>
 
 <script>
-    // Import VanillaTilt dari modul node_modules
+    // Import NPM Module
     import VanillaTilt from 'vanilla-tilt';
 
-    // Jalankan semua skrip saat struktur HTML sudah selesai dimuat
     document.addEventListener("DOMContentLoaded", function() {
         
         // ==========================================
         // 1. INISIALISASI EFEK 3D (VANILLA TILT)
         // ==========================================
-        const tiltElements = document.querySelectorAll("[data-tilt]");
+        // Mengambil semua elemen html yang memiliki atribut data-tilt
+        const tiltElements = document.querySelectorAll<HTMLElement>("[data-tilt]");
+        
         if (tiltElements.length > 0) {
-            VanillaTilt.init(tiltElements);
+            // Inisialisasi library VanillaTilt
+            VanillaTilt.init(Array.from(tiltElements));
         }
 
         // ==========================================
-        // 2. INISIALISASI EFEK SPOTLIGHT PADA KARTU
+        // 2. INISIALISASI EFEK SPOTLIGHT (GLOW KURSOR)
         // ==========================================
-        const spotlightCards = document.querySelectorAll(".spotlight-card");
+        const spotlightCards = document.querySelectorAll<HTMLElement>(".spotlight-card");
+        
         spotlightCards.forEach(card => {
-            // HTMLElement type cast untuk TypeScript/IDE interop, memastikan properti style bisa diakses
-            const htmlCard = card; 
-            
-            htmlCard.addEventListener("mousemove", function(e) {
-                const rect = htmlCard.getBoundingClientRect();
-                const x = e.clientX - rect.left; // Posisi X kursor relatif terhadap kartu
-                const y = e.clientY - rect.top;  // Posisi Y kursor relatif terhadap kartu
+            card.addEventListener("mousemove", function(e) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; // X relatif ke kartu
+                const y = e.clientY - rect.top;  // Y relatif ke kartu
                 
-                // Kirim koordinat kursor ke variabel CSS
-                htmlCard.style.setProperty("--mouse-x", `${x}px`);
-                htmlCard.style.setProperty("--mouse-y", `${y}px`);
+                // Meneruskan koordinat ke file global.css
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
             });
         });
 
@@ -253,7 +261,8 @@ import ProjectCard from '../components/ProjectCard.astro';
         let wordIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
-        let typeTimeout;
+        let typeTimeout: number | ReturnType<typeof setTimeout>;
+        
         const textElement = document.getElementById('typing-text');
 
         function doTyping() {
@@ -262,35 +271,29 @@ import ProjectCard from '../components/ProjectCard.astro';
             const currentWord = words[wordIndex];
             
             if (isDeleting) {
-                // Menghapus karakter
                 textElement.textContent = currentWord.substring(0, charIndex - 1);
                 charIndex--;
             } else {
-                // Menambah karakter
                 textElement.textContent = currentWord.substring(0, charIndex + 1);
                 charIndex++;
             }
 
-            // Logika penentuan kecepatan
             let typeSpeed = isDeleting ? 50 : 100;
 
             if (!isDeleting && charIndex === currentWord.length) {
-                // Selesai mengetik satu kata, diam sebentar sebelum menghapus
-                typeSpeed = 2000;
+                typeSpeed = 2000; // Pause sebelum menghapus
                 isDeleting = true;
             } else if (isDeleting && charIndex === 0) {
-                // Selesai menghapus, pindah ke kata berikutnya
                 isDeleting = false;
                 wordIndex = (wordIndex + 1) % words.length;
-                typeSpeed = 500;
+                typeSpeed = 500; // Pause sebelum mengetik kata baru
             }
 
             typeTimeout = setTimeout(doTyping, typeSpeed);
         }
 
-        // Mulai efek mengetik (pastikan bersih dari timeout sebelumnya)
-        clearTimeout(typeTimeout);
         if(textElement) {
+            clearTimeout(typeTimeout as number);
             textElement.textContent = ""; 
             doTyping();
         }

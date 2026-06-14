@@ -1,7 +1,7 @@
 ---
 // src/layouts/Layout.astro
 import '../styles/global.css'; // Pastikan Tailwind dan base styles ada di sini
-
+import 'aos/dist/aos.css';
 interface Props {
     title: string;
     description?: string; // Membuat deskripsi opsional per halaman
@@ -45,8 +45,6 @@ const ogImage = "/og-image.jpg"; // Letakkan gambar og-image.jpg di folder publi
     <meta property="twitter:image" content={new URL(ogImage, Astro.url)}>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- AOS CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="grid-bg text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white overflow-x-hidden pt-16">
     <!-- EFEK PARTIKEL DEBU KOSMIK -->
@@ -157,44 +155,16 @@ const ogImage = "/og-image.jpg"; // Letakkan gambar og-image.jpg di folder publi
     </button>
 
     <script>
-    // Menggunakan IIFE agar tidak mengotori global scope
-    (function() {
-        const btn = document.getElementById('scrollToTopBtn');
-        
-        if (!btn) return;
+        // Import AOS dari node_modules
+        import AOS from 'aos';
 
-        // Logika menampilkan/menyembunyikan tombol
-        window.addEventListener('scroll', function() {
-        // Tombol muncul setelah user scroll 400px ke bawah
-        if (window.scrollY > 400) {
-            btn.classList.add('opacity-100', 'visible', 'translate-y-0');
-            btn.classList.remove('opacity-0', 'invisible', 'translate-y-10');
-        } else {
-            btn.classList.remove('opacity-100', 'visible', 'translate-y-0');
-            btn.classList.add('opacity-0', 'invisible', 'translate-y-10');
-        }
-        });
-
-        // Logika Scroll ke Atas saat diklik
-        btn.addEventListener('click', function() {
-        // Memanfaatkan scroll-behavior: smooth yang sudah ada di HTML
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-        });
-    })();
-    </script>
-
-    <!-- AOS JS & Initialization -->
-    <script is:inline src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script is:inline>
-        // 1. Initialize AOS
+        // 1. Inisialisasi AOS
+        // Karena ini dijalankan sebagai ES Module oleh Astro, kita bisa langsung memanggilnya
         AOS.init({
-            duration: 800, // Sedikit diperlambat agar lebih smooth
-            once: true,    // Animasi hanya jalan sekali saat scroll down
-            offset: 120,   // Jarak trigger animasi dari bawah screen (px)
-            easing: 'ease-out-cubic', // Jenis easing agar tidak kaku
+            duration: 800,
+            once: true,
+            offset: 120,
+            easing: 'ease-out-cubic',
         });
 
         // 2. Logika Mobile Menu
@@ -204,44 +174,148 @@ const ogImage = "/og-image.jpg"; // Letakkan gambar og-image.jpg di folder publi
         const navLinks = document.querySelectorAll('.mobile-nav-link');
 
         function toggleMenu() {
+            if (!mobileMenu) return;
+            
             mobileMenu.classList.toggle('hidden');
-            // Animasi rotasi ikon burger ke X (sederhana)
             if (mobileMenu.classList.contains('hidden')) {
-                menuIcon.classList.remove('fa-xmark', 'rotate-90');
-                menuIcon.classList.add('fa-bars');
+                if(menuIcon) menuIcon.classList.remove('fa-xmark', 'rotate-90');
+                if(menuIcon) menuIcon.classList.add('fa-bars');
             } else {
-                menuIcon.classList.remove('fa-bars');
-                menuIcon.classList.add('fa-xmark', 'rotate-90');
+                if(menuIcon) menuIcon.classList.remove('fa-bars');
+                if(menuIcon) menuIcon.classList.add('fa-xmark', 'rotate-90');
             }
         }
 
-        menuBtn.addEventListener('click', toggleMenu);
-
-        // Tutup menu saat link diklik (untuk single page apps)
-        navLinks.forEach(link => {
-            link.addEventListener('click', toggleMenu);
-        });
-
-        // Tutup menu saat resize ke desktop
+        if (menuBtn) menuBtn.addEventListener('click', toggleMenu);
+        navLinks.forEach(link => link.addEventListener('click', toggleMenu));
+        
         window.addEventListener('resize', () => {
-            if (window.innerWidth >= 768) { // md breakpoint Tailwind
-                if (!mobileMenu.classList.contains('hidden')) {
-                    toggleMenu();
-                }
+            if (window.innerWidth >= 768 && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                toggleMenu();
             }
         });
 
-        // 3. Efek Navbar Shadow saat Scroll
+        // 3. Setup Partikel Kanvas
+        const canvas = document.getElementById('particles-canvas') as HTMLCanvasElement;
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        let particlesArray = [];
+        let animationFrameId;
+        let isParticlesVisible = true;
+
+        class Particle {
+            x: number; y: number; size: number; speedX: number; speedY: number; opacity: number;
+            
+            constructor() {
+                this.x = Math.random() * (canvas?.width || window.innerWidth);
+                this.y = Math.random() * (canvas?.height || window.innerHeight);
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (canvas) {
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+            }
+            draw() {
+                if (!ctx) return;
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            if (!canvas) return;
+            let numberOfParticles = (canvas.width * canvas.height) / 10000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            if (!isParticlesVisible || !ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            animationFrameId = requestAnimationFrame(animateParticles);
+        }
+
+        if (canvas && ctx) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+            animateParticles();
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initParticles();
+            });
+        }
+
+        // 4. MASTER SCROLL LISTENER (Throttling)
+        let isScrolling = false;
         const header = document.getElementById('main-header');
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+        const progressBar = document.getElementById('scroll-progress');
+
+        if (scrollToTopBtn) {
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 10) {
-                // Saat discroll, ubah ke /80 agar masih sedikit tembus pandang
-                header.classList.add('shadow-lg', 'border-slate-800', 'bg-slate-950/80');
-                header.classList.remove('border-slate-800/50', 'bg-slate-950/50');
-            } else {
-                // Saat di paling atas, kembali ke /50 agar sangat transparan
-                header.classList.remove('shadow-lg', 'border-slate-800', 'bg-slate-950/80');
-                header.classList.add('border-slate-800/50', 'bg-slate-950/50');
+            if (!isScrolling) {
+                window.requestAnimationFrame(() => {
+                    const winScroll = window.scrollY || document.documentElement.scrollTop;
+                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    
+                    if (progressBar) progressBar.style.width = (winScroll / height) * 100 + '%';
+
+                    if (header) {
+                        if (winScroll > 10) {
+                            header.classList.add('shadow-lg', 'border-slate-800', 'bg-slate-950/80');
+                            header.classList.remove('border-slate-800/50', 'bg-slate-950/50');
+                        } else {
+                            header.classList.remove('shadow-lg', 'border-slate-800', 'bg-slate-950/80');
+                            header.classList.add('border-slate-800/50', 'bg-slate-950/50');
+                        }
+                    }
+
+                    if (scrollToTopBtn) {
+                        if (winScroll > 400) {
+                            scrollToTopBtn.classList.add('opacity-100', 'visible', 'translate-y-0');
+                            scrollToTopBtn.classList.remove('opacity-0', 'invisible', 'translate-y-10');
+                        } else {
+                            scrollToTopBtn.classList.remove('opacity-100', 'visible', 'translate-y-0');
+                            scrollToTopBtn.classList.add('opacity-0', 'invisible', 'translate-y-10');
+                        }
+                    }
+
+                    if (winScroll > window.innerHeight) {
+                        if (isParticlesVisible) {
+                            isParticlesVisible = false;
+                            cancelAnimationFrame(animationFrameId);
+                        }
+                    } else {
+                        if (!isParticlesVisible) {
+                            isParticlesVisible = true;
+                            animateParticles();
+                        }
+                    }
+
+                    isScrolling = false;
+                });
+                isScrolling = true;
             }
         });
     </script>
