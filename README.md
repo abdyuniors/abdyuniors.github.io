@@ -26,7 +26,7 @@
 <!-- Gambar Preview Portofolio -->
 <div align="center">
   <a href="https://abdyuniors.github.io/">
-    <img src="https://abdyuniors.github.io/og-image.jpg.png" alt="Preview Portofolio Abdyunior" width="100%" style="border-radius: 12px; max-width: 800px;" />
+    <img src="https://abdyuniors.github.io/og-image.jpg" alt="Preview Portofolio Abdyunior" width="100%" style="border-radius: 12px; max-width: 800px;" />
   </a>
   <br/>
   <i>☝️ Klik gambar di atas untuk melihat website secara langsung ☝️</i>
